@@ -1,0 +1,2411 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CoffeeOS | 全球咖啡产业控制中心 - 海南封关战略</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        :root {
+            --x-black: #000000;
+            --x-dark-gray: #15202b;
+            --x-gray: #2f3336;
+            --x-light-gray: #6e767d;
+            --x-blue: #1d9bf0;
+            --x-green: #00ba7c;
+            --x-white: #e7e9ea;
+            --x-yellow: #ffd400;
+            --x-red: #f4212e;
+            --transition-fast: 0.2s ease;
+            --transition-base: 0.3s ease;
+            --transition-slow: 0.5s ease;
+            --shadow-card: 0 4px 12px rgba(0, 0, 0, 0.2);
+            --shadow-hover: 0 10px 25px rgba(0, 0, 0, 0.3);
+            --shadow-modal: 0 20px 40px rgba(0, 0, 0, 0.5);
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        html {
+            scroll-behavior: smooth;
+        }
+        
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+            background-color: var(--x-black);
+            color: var(--x-white);
+            line-height: 1.5;
+            overflow-x: hidden;
+        }
+        
+        /* 布局容器 */
+        .app-container {
+            display: flex;
+            max-width: 1400px;
+            margin: 0 auto;
+            min-height: 100vh;
+        }
+        
+        /* 左侧导航栏 */
+        .sidebar-left {
+            width: 260px;
+            border-right: 1px solid var(--x-gray);
+            padding: 20px 15px;
+            position: fixed;
+            top: 0;
+            height: 100vh;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            background-color: var(--x-black);
+            z-index: 1000;
+            transform: translateX(0);
+            transition: transform var(--transition-base);
+        }
+        
+        .logo-container {
+            margin-bottom: 30px;
+            padding: 0 10px;
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            font-size: 28px;
+            font-weight: 800;
+            color: var(--x-white);
+            text-decoration: none;
+            transition: opacity var(--transition-fast);
+        }
+        
+        .logo:hover {
+            opacity: 0.9;
+        }
+        
+        .logo-icon {
+            background: linear-gradient(135deg, var(--x-green), var(--x-blue));
+            width: 42px;
+            height: 42px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 12px;
+            transition: transform var(--transition-base);
+        }
+        
+        .logo:hover .logo-icon {
+            transform: rotate(15deg);
+        }
+        
+        .logo-text {
+            font-size: 24px;
+        }
+        
+        .logo-text span {
+            color: var(--x-green);
+        }
+        
+        .nav-list {
+            list-style: none;
+            flex-grow: 1;
+        }
+        
+        .nav-item {
+            margin-bottom: 8px;
+        }
+        
+        .nav-link {
+            display: flex;
+            align-items: center;
+            padding: 14px 16px;
+            border-radius: 9999px;
+            color: var(--x-white);
+            text-decoration: none;
+            font-size: 20px;
+            font-weight: 500;
+            transition: all var(--transition-fast);
+            position: relative;
+        }
+        
+        .nav-link:hover {
+            background-color: rgba(255, 255, 255, 0.05);
+        }
+        
+        .nav-link.active {
+            font-weight: 700;
+            color: var(--x-white);
+            background-color: rgba(29, 155, 240, 0.1);
+        }
+        
+        .nav-link.active::before {
+            content: '';
+            position: absolute;
+            left: 4px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 4px;
+            height: 24px;
+            background-color: var(--x-blue);
+            border-radius: 2px;
+        }
+        
+        .nav-link i {
+            margin-right: 18px;
+            width: 24px;
+            text-align: center;
+            font-size: 24px;
+        }
+        
+        .post-btn {
+            background-color: var(--x-blue);
+            color: white;
+            border: none;
+            border-radius: 9999px;
+            padding: 18px 32px;
+            font-size: 18px;
+            font-weight: 700;
+            width: 90%;
+            margin: 20px auto 0;
+            cursor: pointer;
+            transition: all var(--transition-fast);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .post-btn:hover {
+            background-color: #1a8cd8;
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-hover);
+        }
+        
+        .post-btn i {
+            margin-right: 8px;
+        }
+        
+        /* 主内容区 */
+        .main-content {
+            flex: 1;
+            margin-left: 260px;
+            transition: margin-left var(--transition-base);
+        }
+        
+        /* 页面头部 */
+        .page-header {
+            padding: 20px;
+            border-bottom: 1px solid var(--x-gray);
+            position: sticky;
+            top: 0;
+            background-color: rgba(0, 0, 0, 0.95);
+            backdrop-filter: blur(10px);
+            z-index: 100;
+        }
+        
+        .page-title {
+            font-size: 24px;
+            font-weight: 800;
+        }
+        
+        .page-subtitle {
+            color: var(--x-light-gray);
+            font-size: 14px;
+            margin-top: 5px;
+        }
+        
+        /* 内容区 */
+        .content-section {
+            padding: 25px 20px;
+            display: none;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity var(--transition-base), transform var(--transition-base);
+        }
+        
+        .content-section.active {
+            display: block;
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
+        /* 英雄区域 */
+        .hero-section {
+            background: linear-gradient(135deg, rgba(21, 32, 43, 0.9), rgba(0, 0, 0, 0.9));
+            text-align: center;
+            padding: 60px 20px;
+        }
+        
+        .hero-title {
+            font-size: 42px;
+            font-weight: 800;
+            line-height: 1.2;
+            margin-bottom: 20px;
+            background: linear-gradient(90deg, var(--x-green), var(--x-blue));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: fadeInUp 0.8s ease forwards;
+        }
+        
+        .hero-subtitle {
+            font-size: 22px;
+            color: var(--x-light-gray);
+            margin-bottom: 30px;
+            animation: fadeInUp 0.8s ease 0.2s forwards;
+            opacity: 0;
+        }
+        
+        .hero-stats {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 30px;
+            margin-top: 40px;
+            animation: fadeInUp 0.8s ease 0.4s forwards;
+            opacity: 0;
+        }
+        
+        .hero-stat {
+            text-align: center;
+        }
+        
+        .hero-stat-value {
+            font-size: 36px;
+            font-weight: 800;
+            color: var(--x-green);
+            display: block;
+        }
+        
+        .hero-stat-label {
+            font-size: 14px;
+            color: var(--x-light-gray);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        /* 卡片样式 */
+        .card {
+            background-color: var(--x-dark-gray);
+            border-radius: 16px;
+            padding: 25px;
+            margin-bottom: 20px;
+            border: 1px solid var(--x-gray);
+            transition: transform var(--transition-base), box-shadow var(--transition-base);
+            animation: fadeInUp 0.6s ease forwards;
+            opacity: 0;
+        }
+        
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-hover);
+        }
+        
+        .card-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        .card-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 12px;
+            background: linear-gradient(135deg, var(--x-green), var(--x-blue));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 15px;
+            font-size: 24px;
+        }
+        
+        .card-title {
+            font-size: 22px;
+            font-weight: 700;
+            margin-bottom: 5px;
+        }
+        
+        .card-subtitle {
+            color: var(--x-light-gray);
+            font-size: 14px;
+        }
+        
+        /* Dashboard 样式 */
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+            margin-top: 15px;
+        }
+        
+        .dashboard-card {
+            background-color: rgba(255, 255, 255, 0.05);
+            border-radius: 16px;
+            padding: 20px;
+            border: 1px solid var(--x-gray);
+            transition: transform var(--transition-fast);
+        }
+        
+        .dashboard-card:hover {
+            transform: translateY(-3px);
+        }
+        
+        .dashboard-title {
+            font-size: 18px;
+            font-weight: 700;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+        }
+        
+        .dashboard-title i {
+            margin-right: 10px;
+            color: var(--x-blue);
+        }
+        
+        .dashboard-value {
+            font-size: 32px;
+            font-weight: 800;
+            margin: 10px 0;
+        }
+        
+        .dashboard-trend {
+            font-size: 14px;
+            color: var(--x-green);
+            display: flex;
+            align-items: center;
+        }
+        
+        .dashboard-trend i {
+            margin-right: 5px;
+        }
+        
+        .dashboard-trend.down {
+            color: var(--x-red);
+        }
+        
+        .chart-container {
+            height: 200px;
+            margin-top: 20px;
+            position: relative;
+        }
+        
+        /* 节点地图样式 */
+        .node-map-container {
+            position: relative;
+            height: 400px;
+            background-color: rgba(21, 32, 43, 0.7);
+            border-radius: 12px;
+            margin: 20px 0;
+            overflow: hidden;
+            border: 1px solid var(--x-gray);
+        }
+        
+        .node-map {
+            width: 100%;
+            height: 100%;
+            position: relative;
+        }
+        
+        .node {
+            position: absolute;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background-color: var(--x-green);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--x-black);
+            font-weight: 700;
+            font-size: 12px;
+            cursor: pointer;
+            transition: all var(--transition-base);
+            box-shadow: 0 0 10px rgba(0, 186, 124, 0.5);
+            z-index: 10;
+        }
+        
+        .node:hover {
+            transform: scale(1.5);
+            z-index: 20;
+        }
+        
+        .node.hub {
+            width: 36px;
+            height: 36px;
+            background-color: var(--x-blue);
+            font-size: 16px;
+            box-shadow: 0 0 15px rgba(29, 155, 240, 0.7);
+        }
+        
+        .node.regional {
+            width: 30px;
+            height: 30px;
+            background-color: var(--x-yellow);
+            color: var(--x-black);
+            box-shadow: 0 0 12px rgba(255, 212, 0, 0.6);
+        }
+        
+        .node-line {
+            position: absolute;
+            height: 2px;
+            background-color: var(--x-green);
+            opacity: 0.5;
+            transform-origin: 0 0;
+            z-index: 5;
+        }
+        
+        .node-tooltip {
+            position: absolute;
+            background-color: var(--x-dark-gray);
+            border: 1px solid var(--x-gray);
+            border-radius: 8px;
+            padding: 12px;
+            max-width: 300px;
+            z-index: 100;
+            display: none;
+            box-shadow: var(--shadow-card);
+            animation: fadeIn 0.3s ease;
+        }
+        
+        .node-tooltip.active {
+            display: block;
+        }
+        
+        /* 新闻动态样式 */
+        .news-list {
+            margin-top: 20px;
+        }
+        
+        .news-item {
+            padding: 20px 0;
+            border-bottom: 1px solid var(--x-gray);
+            cursor: pointer;
+            transition: background-color var(--transition-fast);
+            border-radius: 8px;
+            padding-left: 10px;
+            padding-right: 10px;
+        }
+        
+        .news-item:hover {
+            background-color: rgba(255, 255, 255, 0.05);
+        }
+        
+        .news-item:last-child {
+            border-bottom: none;
+        }
+        
+        .news-date {
+            color: var(--x-light-gray);
+            font-size: 14px;
+            margin-bottom: 5px;
+        }
+        
+        .news-title {
+            font-weight: 700;
+            font-size: 18px;
+            margin-bottom: 10px;
+            color: var(--x-white);
+            transition: color var(--transition-fast);
+        }
+        
+        .news-item:hover .news-title {
+            color: var(--x-blue);
+        }
+        
+        .news-excerpt {
+            color: var(--x-light-gray);
+            font-size: 15px;
+            line-height: 1.5;
+        }
+        
+        /* 模态框通用样式 */
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.8);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 2000;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity var(--transition-base), visibility var(--transition-base);
+        }
+        
+        .modal.active {
+            opacity: 1;
+            visibility: visible;
+        }
+        
+        .modal-content {
+            background-color: var(--x-dark-gray);
+            border-radius: 16px;
+            padding: 30px;
+            max-width: 500px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+            transform: translateY(30px);
+            transition: transform var(--transition-base);
+            border: 1px solid var(--x-gray);
+            box-shadow: var(--shadow-modal);
+        }
+        
+        .modal.active .modal-content {
+            transform: translateY(0);
+        }
+        
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid var(--x-gray);
+        }
+        
+        .modal-close {
+            background: none;
+            border: none;
+            color: var(--x-light-gray);
+            font-size: 24px;
+            cursor: pointer;
+            transition: color var(--transition-fast);
+        }
+        
+        .modal-close:hover {
+            color: var(--x-white);
+        }
+        
+        /* 联系方式样式 */
+        .contact-info {
+            margin-top: 20px;
+        }
+        
+        .contact-item {
+            display: flex;
+            align-items: center;
+            padding: 15px;
+            margin-bottom: 12px;
+            background-color: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+            border: 1px solid var(--x-gray);
+            transition: background-color var(--transition-fast);
+        }
+        
+        .contact-item:hover {
+            background-color: rgba(255, 255, 255, 0.08);
+        }
+        
+        .contact-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 10px;
+            background: linear-gradient(135deg, var(--x-green), var(--x-blue));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 15px;
+            font-size: 22px;
+        }
+        
+        .contact-details h4 {
+            font-size: 16px;
+            margin-bottom: 5px;
+            color: var(--x-light-gray);
+        }
+        
+        .contact-details p {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--x-white);
+        }
+        
+        .contact-copy-btn {
+            background: none;
+            border: 1px solid var(--x-gray);
+            color: var(--x-white);
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 12px;
+            cursor: pointer;
+            margin-top: 8px;
+            transition: all var(--transition-fast);
+        }
+        
+        .contact-copy-btn:hover {
+            background-color: var(--x-blue);
+            border-color: var(--x-blue);
+        }
+        
+        .contact-note {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: rgba(29, 155, 240, 0.1);
+            border-radius: 10px;
+            border-left: 4px solid var(--x-blue);
+            font-size: 14px;
+            color: var(--x-light-gray);
+        }
+        
+        /* 右侧边栏 */
+        .sidebar-right {
+            width: 380px;
+            padding: 20px;
+            position: sticky;
+            top: 0;
+            height: 100vh;
+            overflow-y: auto;
+        }
+        
+        .search-box {
+            background-color: var(--x-dark-gray);
+            border-radius: 9999px;
+            padding: 15px 20px;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            border: 1px solid var(--x-gray);
+            transition: border-color var(--transition-fast);
+        }
+        
+        .search-box:focus-within {
+            border-color: var(--x-blue);
+        }
+        
+        .search-box i {
+            color: var(--x-light-gray);
+            margin-right: 10px;
+            font-size: 18px;
+        }
+        
+        .search-input {
+            background: none;
+            border: none;
+            color: var(--x-white);
+            font-size: 16px;
+            width: 100%;
+            outline: none;
+        }
+        
+        .widget {
+            background-color: var(--x-dark-gray);
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 20px;
+            border: 1px solid var(--x-gray);
+        }
+        
+        .widget-title {
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+        }
+        
+        .widget-title i {
+            margin-right: 10px;
+            color: var(--x-blue);
+        }
+        
+        .trend-list .trend-item {
+            padding: 12px 0;
+            border-bottom: 1px solid var(--x-gray);
+            cursor: pointer;
+            transition: background-color var(--transition-fast);
+            border-radius: 8px;
+            padding-left: 10px;
+            padding-right: 10px;
+        }
+        
+        .trend-item:hover {
+            background-color: rgba(255, 255, 255, 0.05);
+        }
+        
+        .trend-item:last-child {
+            border-bottom: none;
+        }
+        
+        .trend-category {
+            font-size: 13px;
+            color: var(--x-light-gray);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .trend-tag {
+            font-weight: 700;
+            display: block;
+            margin-top: 2px;
+            color: var(--x-white);
+        }
+        
+        .trend-stats {
+            font-size: 13px;
+            color: var(--x-light-gray);
+            margin-top: 2px;
+        }
+        
+        .partner-logo {
+            height: 40px;
+            margin: 10px 15px 10px 0;
+            filter: brightness(0) invert(1);
+            opacity: 0.8;
+            display: inline-block;
+            vertical-align: middle;
+            transition: opacity var(--transition-fast);
+        }
+        
+        .partner-logo:hover {
+            opacity: 1;
+        }
+        
+        /* 动画 */
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        @keyframes fadeInUp {
+            from { 
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to { 
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .fade-in {
+            animation: fadeInUp 0.5s ease forwards;
+        }
+        
+        /* 响应式设计 */
+        @media (max-width: 1200px) {
+            .sidebar-right {
+                display: none;
+            }
+            
+            .main-content {
+                margin-left: 260px;
+            }
+        }
+        
+        @media (max-width: 992px) {
+            .sidebar-left {
+                width: 80px;
+                padding: 20px 10px;
+            }
+            
+            .logo-text, .nav-link span {
+                display: none;
+            }
+            
+            .logo-icon {
+                margin-right: 0;
+            }
+            
+            .nav-link i {
+                margin-right: 0;
+                font-size: 22px;
+            }
+            
+            .post-btn span {
+                display: none;
+            }
+            
+            .post-btn i {
+                margin-right: 0;
+                font-size: 22px;
+            }
+            
+            .main-content {
+                margin-left: 80px;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .app-container {
+                flex-direction: column;
+            }
+            
+            .sidebar-left {
+                width: 100%;
+                height: auto;
+                position: static;
+                flex-direction: row;
+                justify-content: space-between;
+                padding: 10px 15px;
+                transform: translateX(0);
+                border-right: none;
+                border-bottom: 1px solid var(--x-gray);
+            }
+            
+            .logo-container {
+                margin-bottom: 0;
+            }
+            
+            .nav-list {
+                display: flex;
+                flex-grow: 0;
+            }
+            
+            .nav-item {
+                margin-bottom: 0;
+                margin-right: 10px;
+            }
+            
+            .post-btn {
+                margin: 0;
+                width: auto;
+                padding: 12px;
+            }
+            
+            .main-content {
+                margin-left: 0;
+            }
+            
+            .hero-title {
+                font-size: 32px;
+            }
+            
+            .hero-subtitle {
+                font-size: 18px;
+            }
+            
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .node-map-container {
+                height: 300px;
+            }
+            
+            .modal-content {
+                width: 95%;
+                padding: 20px;
+            }
+        }
+        
+        @media (max-width: 576px) {
+            .hero-title {
+                font-size: 28px;
+            }
+            
+            .hero-subtitle {
+                font-size: 16px;
+            }
+            
+            .hero-stats {
+                gap: 15px;
+            }
+            
+            .hero-stat-value {
+                font-size: 28px;
+            }
+            
+            .card {
+                padding: 20px;
+            }
+            
+            .page-header {
+                padding: 15px;
+            }
+            
+            .content-section {
+                padding: 20px 15px;
+            }
+            
+            .contact-item {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            .contact-icon {
+                margin-right: 0;
+                margin-bottom: 10px;
+            }
+        }
+        
+        /* 移动端菜单切换 */
+        .mobile-menu-toggle {
+            display: none;
+            background: none;
+            border: none;
+            color: var(--x-white);
+            font-size: 24px;
+            cursor: pointer;
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            z-index: 2000;
+        }
+        
+        @media (max-width: 992px) {
+            .mobile-menu-toggle {
+                display: block;
+            }
+            
+            .sidebar-left {
+                transform: translateX(-100%);
+            }
+            
+            .sidebar-left.active {
+                transform: translateX(0);
+            }
+            
+            .main-content {
+                margin-left: 0;
+            }
+        }
+        
+        /* 滚动条样式 */
+        ::-webkit-scrollbar {
+            width: 10px;
+        }
+        
+        ::-webkit-scrollbar-track {
+            background: var(--x-black);
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            background: var(--x-gray);
+            border-radius: 5px;
+        }
+        
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--x-light-gray);
+        }
+        
+        /* 工具类 */
+        .hidden {
+            display: none !important;
+        }
+        
+        .text-center {
+            text-align: center;
+        }
+        
+        .mt-20 {
+            margin-top: 20px;
+        }
+        
+        .mb-20 {
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <!-- 移动端菜单切换按钮 -->
+    <button class="mobile-menu-toggle" id="mobileMenuToggle">
+        <i class="fas fa-bars"></i>
+    </button>
+    
+    <div class="app-container">
+        <!-- 左侧导航栏 -->
+        <aside class="sidebar-left" id="sidebarLeft">
+            <div class="logo-container">
+                <a href="#" class="logo" id="homeLink">
+                    <div class="logo-icon">
+                        <i class="fas fa-coffee"></i>
+                    </div>
+                    <div class="logo-text">Coffee<span>OS</span></div>
+                </a>
+            </div>
+            
+            <ul class="nav-list" id="navList">
+                <li class="nav-item">
+                    <a href="#" class="nav-link active" data-section="home">
+                        <i class="fas fa-home"></i>
+                        <span>首页</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link" data-section="dashboard">
+                        <i class="fas fa-chart-line"></i>
+                        <span>战略驾驶舱</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link" data-section="whitepaper">
+                        <i class="fas fa-file-alt"></i>
+                        <span>技术白皮书</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link" data-section="nodes">
+                        <i class="fas fa-globe-asia"></i>
+                        <span>全球节点</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link" data-section="news">
+                        <i class="fas fa-newspaper"></i>
+                        <span>新闻动态</span>
+                    </a>
+                </li>
+            </ul>
+            
+            <button class="post-btn" id="contactBtn">
+                <i class="fas fa-paper-plane"></i>
+                <span>商务合作</span>
+            </button>
+        </aside>
+
+        <!-- 中间主内容区 -->
+        <main class="main-content">
+            <!-- 首页 -->
+            <section id="home" class="content-section active">
+                <header class="page-header">
+                    <h1 class="page-title">CoffeeOS 全球咖啡产业控制中心</h1>
+                    <p class="page-subtitle">依托海南封关战略，打造全球咖啡产业链的"总控室"与"规则制定者"</p>
+                </header>
+                
+                <div class="hero-section">
+                    <h1 class="hero-title">重新定义全球咖啡产业</h1>
+                    <p class="hero-subtitle">雾化水培技术 × 海南封关政策 × 全球产业控制 = 未来咖啡新秩序</p>
+                    
+                    <div class="hero-stats">
+                        <div class="hero-stat">
+                            <span class="hero-stat-value">18x</span>
+                            <span class="hero-stat-label">产量密度指数</span>
+                        </div>
+                        <div class="hero-stat">
+                            <span class="hero-stat-value">95%</span>
+                            <span class="hero-stat-label">节水效率</span>
+                        </div>
+                        <div class="hero-stat">
+                            <span class="hero-stat-value">0</span>
+                            <span class="hero-stat-label">农药使用</span>
+                        </div>
+                        <div class="hero-stat">
+                            <span class="hero-stat-value">15%</span>
+                            <span class="hero-stat-label">海南企业税率</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="card fade-in" style="animation-delay: 0.1s">
+                    <div class="card-header">
+                        <div class="card-icon">
+                            <i class="fas fa-chess-queen"></i>
+                        </div>
+                        <div>
+                            <h3 class="card-title">海南封关：我们的战略机遇</h3>
+                            <p class="card-subtitle">雾化水培咖啡种植模式与海南封关政策的完美契合</p>
+                        </div>
+                    </div>
+                    <p>海南封关不是简单的经济操作，而是产业战争、金融战争、规则战争的三线合一战略落子。CoffeeOS利用海南作为"世界产业链总控室"的定位，将雾化水培咖啡技术转化为全球咖啡产业的规则制定权。</p>
+                    <div class="dashboard-grid mt-20">
+                        <div class="dashboard-card">
+                            <div class="dashboard-title"><i class="fas fa-brain"></i> "脑袋"留存优势</div>
+                            <div class="dashboard-value">研发+标准+结算</div>
+                            <p>知识产权、育种数据库、AI种植模型永久留存海南，享受15%企业所得税。生产环节布局东南亚，实现"中国智慧管理全球制造"。</p>
+                        </div>
+                        <div class="dashboard-card">
+                            <div class="dashboard-title"><i class="fas fa-gavel"></i> "规则"制定场景</div>
+                            <div class="dashboard-value">ESG与碳足迹认证</div>
+                            <p>零排放种植模式为海南成为区域绿色认证中心提供完美案例，主导咖啡产业碳足迹标准与定价权。</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="card fade-in" style="animation-delay: 0.2s">
+                    <div class="card-header">
+                        <div class="card-icon">
+                            <i class="fas fa-project-diagram"></i>
+                        </div>
+                        <div>
+                            <h3 class="card-title">全球首创：雾化水培咖啡种植系统</h3>
+                            <p class="card-subtitle">第四代农业技术与产业控制论的完美结合</p>
+                        </div>
+                    </div>
+                    <p>CoffeeOS的雾化水培技术不仅是一项农业创新，更是全球咖啡产业链重组的核心引擎。通过"海南总部+全球节点"的架构，我们实现了对咖啡产业从育种到消费的全链条控制。</p>
+                    
+                    <div class="dashboard-grid mt-20">
+                        <div class="dashboard-card">
+                            <div class="dashboard-title"><i class="fas fa-database"></i> 数据资产化</div>
+                            <div class="dashboard-value">2,500+</div>
+                            <p>每批次咖啡豆产生2,500+数据点，形成可跨境流动的数字资产，构建产业控制的数据壁垒。</p>
+                        </div>
+                        <div class="dashboard-card">
+                            <div class="dashboard-title"><i class="fas fa-yen-sign"></i> 人民币国际化</div>
+                            <div class="dashboard-value">42%</div>
+                            <p>咖啡贸易人民币结算比例已达42%，通过海南跨境金融平台，推动人民币成为咖啡大宗贸易锚货币。</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 战略驾驶舱 -->
+            <section id="dashboard" class="content-section">
+                <header class="page-header">
+                    <h1 class="page-title">战略驾驶舱</h1>
+                    <p class="page-subtitle">实时监控全球咖啡产业链关键指标与海南封关政策机遇</p>
+                </header>
+                
+                <div class="card fade-in" style="animation-delay: 0.1s">
+                    <h2 class="dashboard-title"><i class="fas fa-tachometer-alt"></i> 核心指标仪表板</h2>
+                    <div class="dashboard-grid">
+                        <div class="dashboard-card">
+                            <div class="dashboard-title">全球咖啡市场占有率</div>
+                            <div class="dashboard-value">2.4%</div>
+                            <div class="dashboard-trend"><i class="fas fa-arrow-up"></i> 同比增长 47%</div>
+                            <div class="chart-container">
+                                <canvas id="marketShareChart"></canvas>
+                            </div>
+                        </div>
+                        <div class="dashboard-card">
+                            <div class="dashboard-title">海南总部成本优势</div>
+                            <div class="dashboard-value">35%</div>
+                            <div class="dashboard-trend"><i class="fas fa-arrow-down"></i> 较新加坡低 35%</div>
+                            <p>企业所得税15% | 高端人才个税15% | 数据跨境便利 | 资金进出自由</p>
+                        </div>
+                        <div class="dashboard-card">
+                            <div class="dashboard-title">技术溢价指数</div>
+                            <div class="dashboard-value">3.8x</div>
+                            <div class="dashboard-trend"><i class="fas fa-arrow-up"></i> 传统咖啡价格的3.8倍</div>
+                            <div class="chart-container">
+                                <canvas id="priceChart"></canvas>
+                            </div>
+                        </div>
+                        <div class="dashboard-card">
+                            <div class="dashboard-title">碳排放减少</div>
+                            <div class="dashboard-value">78%</div>
+                            <div class="dashboard-trend"><i class="fas fa-leaf"></i> 较传统种植减少78%</div>
+                            <p>为零碳咖啡认证与碳权交易奠定基础，契合海南ESG认证中心定位</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="card fade-in" style="animation-delay: 0.2s">
+                    <h2 class="dashboard-title"><i class="fas fa-project-diagram"></i> 产业链控制力分析</h2>
+                    <div class="dashboard-grid">
+                        <div class="dashboard-card">
+                            <div class="dashboard-title">价值链控制点</div>
+                            <div class="dashboard-value">7/10</div>
+                            <div class="dashboard-trend"><i class="fas fa-check-circle"></i> 核心控制点已占据</div>
+                            <ul style="margin-top: 15px; padding-left: 20px;">
+                                <li>育种研发 (海南)</li>
+                                <li>营养液配方 (海南)</li>
+                                <li>AI种植算法 (海南)</li>
+                                <li>品质标准 (海南)</li>
+                                <li>碳足迹认证 (海南)</li>
+                                <li>全球结算 (海南)</li>
+                                <li>品牌营销 (海南)</li>
+                            </ul>
+                        </div>
+                        <div class="dashboard-card">
+                            <div class="dashboard-title">人民币结算比例</div>
+                            <div class="dashboard-value">42%</div>
+                            <div class="dashboard-trend"><i class="fas fa-arrow-up"></i> 年增长 18%</div>
+                            <p>通过海南跨境金融便利，推动咖啡贸易人民币结算，支撑人民币国际化战略</p>
+                            <div class="chart-container">
+                                <canvas id="currencyChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="card fade-in" style="animation-delay: 0.3s">
+                    <h2 class="dashboard-title"><i class="fas fa-chart-bar"></i> 封关政策红利分析</h2>
+                    <div class="dashboard-grid">
+                        <div class="dashboard-card">
+                            <div class="dashboard-title">税收优势对比</div>
+                            <div class="dashboard-value">15% vs 17-25%</div>
+                            <p>海南企业所得税15%，低于新加坡(17%)、香港(16.5%)和东南亚主要国家(20-25%)</p>
+                            <div class="chart-container">
+                                <canvas id="taxChart"></canvas>
+                            </div>
+                        </div>
+                        <div class="dashboard-card">
+                            <div class="dashboard-title">数据跨境流动指数</div>
+                            <div class="dashboard-value">87%</div>
+                            <div class="dashboard-trend"><i class="fas fa-arrow-up"></i> 便利度提升 87%</div>
+                            <p>海南跨境数据流动负面清单管理模式，使研发数据跨境流动效率提升87%</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 技术白皮书 -->
+            <section id="whitepaper" class="content-section">
+                <header class="page-header">
+                    <h1 class="page-title">技术白皮书</h1>
+                    <p class="page-subtitle">全球首创雾化水培咖啡种植技术体系</p>
+                </header>
+                
+                <div class="card fade-in" style="animation-delay: 0.1s">
+                    <div class="card-header">
+                        <div class="card-icon">
+                            <i class="fas fa-tint"></i>
+                        </div>
+                        <div>
+                            <h3 class="card-title">雾化水培技术核心原理</h3>
+                            <p class="card-subtitle">颠覆传统农业的第四代种植技术</p>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-20">
+                        <h4 class="whitepaper-section-title">技术优势</h4>
+                        <div class="dashboard-grid">
+                            <div class="dashboard-card">
+                                <div class="dashboard-title"><i class="fas fa-water"></i> 水资源利用</div>
+                                <div class="dashboard-value">95%</div>
+                                <p>节水效率达到95%，相比传统咖啡种植每亩节约水资源约3000吨/年</p>
+                            </div>
+                            <div class="dashboard-card">
+                                <div class="dashboard-title"><i class="fas fa-mountain"></i> 土地利用率</div>
+                                <div class="dashboard-value">18x</div>
+                                <p>垂直立体种植，单位面积产量为哥伦比亚顶级农场的18倍</p>
+                            </div>
+                            <div class="dashboard-card">
+                                <div class="dashboard-title"><i class="fas fa-wind"></i> 碳排放</div>
+                                <div class="dashboard-value">-78%</div>
+                                <p>全程零农药、精准营养输送，碳排放较传统种植减少78%</p>
+                            </div>
+                            <div class="dashboard-card">
+                                <div class="dashboard-title"><i class="fas fa-calendar-alt"></i> 生产周期</div>
+                                <div class="dashboard-value">全年</div>
+                                <p>打破季节限制，实现365天全年稳定产出，供应稳定性100%</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-20">
+                        <h4 class="whitepaper-section-title">与海南封关政策的协同效应</h4>
+                        <p>雾化水培咖啡技术不仅是农业创新，更是与海南封关战略高度协同的产业控制工具：</p>
+                        <ul style="margin-top: 15px; padding-left: 20px;">
+                            <li><strong>数据资产化</strong>：种植全过程产生2500+数据点/批次，形成可跨境流动的数据资产</li>
+                            <li><strong>知识产权壁垒</strong>：核心技术专利、育种数据库永久留存海南，享受15%企业所得税</li>
+                            <li><strong>标准输出</strong>：依托海南作为区域认证中心定位，输出咖啡品质与碳足迹标准</li>
+                            <li><strong>金融创新</strong>：基于可验证的ESG数据，在海南发行咖啡碳汇绿色金融产品</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="card fade-in" style="animation-delay: 0.2s">
+                    <div class="card-header">
+                        <div class="card-icon">
+                            <i class="fas fa-robot"></i>
+                        </div>
+                        <div>
+                            <h3 class="card-title">AI种植算法与区块链溯源</h3>
+                            <p class="card-subtitle">数字化咖啡从基因到杯子的全过程</p>
+                        </div>
+                    </div>
+                    
+                    <p>CoffeeOS的核心不仅仅是种植技术，更是一套完整的数字化咖啡产业操作系统：</p>
+                    
+                    <div class="dashboard-grid mt-20">
+                        <div class="dashboard-card">
+                            <div class="dashboard-title"><i class="fas fa-dna"></i> 基因数据库</div>
+                            <div class="dashboard-value">127种</div>
+                            <p>全球最完整的咖啡基因库，涵盖阿拉比卡、罗布斯塔等127个品种的基因数据</p>
+                        </div>
+                        <div class="dashboard-card">
+                            <div class="dashboard-title"><i class="fas fa-code-branch"></i> 区块链节点</div>
+                            <div class="dashboard-value">58个</div>
+                            <p>全球部署58个区块链节点，确保从种植到消费全链条数据不可篡改</p>
+                        </div>
+                        <div class="dashboard-card">
+                            <div class="dashboard-title"><i class="fas fa-cogs"></i> AI算法模型</div>
+                            <div class="dashboard-value">24个</div>
+                            <p>24个专用AI模型，覆盖从营养配比到风味预测的全流程优化</p>
+                        </div>
+                        <div class="dashboard-card">
+                            <div class="dashboard-title"><i class="fas fa-tasks"></i> 品质一致性</div>
+                            <div class="dashboard-value">99.7%</div>
+                            <p>通过精准环境控制，实现批次间品质一致性达到99.7%</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 全球节点 -->
+            <section id="nodes" class="content-section">
+                <header class="page-header">
+                    <h1 class="page-title">全球节点网络</h1>
+                    <p class="page-subtitle">"海南总部+全球工厂"的产业控制架构</p>
+                </header>
+                
+                <div class="card fade-in" style="animation-delay: 0.1s">
+                    <div class="card-header">
+                        <div class="card-icon">
+                            <i class="fas fa-network-wired"></i>
+                        </div>
+                        <div>
+                            <h3 class="card-title">全球节点分布</h3>
+                            <p class="card-subtitle">实现"中国智慧管理全球制造"的产业架构</p>
+                        </div>
+                    </div>
+                    
+                    <div class="node-map-container">
+                        <div class="node-map" id="nodeMap">
+                            <!-- 节点将通过JavaScript动态生成 -->
+                        </div>
+                        <div class="node-tooltip" id="nodeTooltip"></div>
+                    </div>
+                    
+                    <div class="dashboard-grid mt-20">
+                        <div class="dashboard-card">
+                            <div class="dashboard-title"><i class="fas fa-hub"></i> 控制中心 (海南)</div>
+                            <div class="dashboard-value">1个</div>
+                            <p>全球总部：研发、结算、品牌、标准制定</p>
+                            <ul style="margin-top: 10px;">
+                                <li>AI算法研发中心</li>
+                                <li>全球供应链调度中心</li>
+                                <li>人民币结算中心</li>
+                                <li>碳足迹认证中心</li>
+                            </ul>
+                        </div>
+                        <div class="dashboard-card">
+                            <div class="dashboard-title"><i class="fas fa-industry"></i> 区域中心 (3个)</div>
+                            <div class="dashboard-value">3个</div>
+                            <p>区域运营与技术支持中心</p>
+                            <ul style="margin-top: 10px;">
+                                <li>东南亚中心 (越南)</li>
+                                <li>南美中心 (哥伦比亚)</li>
+                                <li>非洲中心 (埃塞俄比亚)</li>
+                            </ul>
+                        </div>
+                        <div class="dashboard-card">
+                            <div class="dashboard-title"><i class="fas fa-seedling"></i> 种植节点 (12个)</div>
+                            <div class="dashboard-value">12个</div>
+                            <p>雾化水培咖啡种植基地</p>
+                            <ul style="margin-top: 10px;">
+                                <li>越南 (3个)</li>
+                                <li>印尼 (2个)</li>
+                                <li>哥伦比亚 (2个)</li>
+                                <li>巴西 (2个)</li>
+                                <li>埃塞俄比亚 (2个)</li>
+                                <li>海南 (1个研发基地)</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="card fade-in" style="animation-delay: 0.2s">
+                    <h2 class="dashboard-title"><i class="fas fa-exchange-alt"></i> 节点间价值流动</h2>
+                    <p>海南总部作为全球产业网络的"大脑"和"心脏"，控制着关键的价值流动：</p>
+                    
+                    <div class="dashboard-grid mt-20">
+                        <div class="dashboard-card">
+                            <div class="dashboard-title">技术流</div>
+                            <div class="dashboard-value">海南 → 全球</div>
+                            <p>AI种植算法、营养液配方、设备控制系统从海南总部输出到全球节点</p>
+                        </div>
+                        <div class="dashboard-card">
+                            <div class="dashboard-title">数据流</div>
+                            <div class="dashboard-value">全球 → 海南</div>
+                            <p>种植数据、环境数据、品质数据从全球节点汇聚到海南总部</p>
+                        </div>
+                        <div class="dashboard-card">
+                            <div class="dashboard-title">资金流</div>
+                            <div class="dashboard-value">海南 ↔ 全球</div>
+                            <p>中国资本通过海南投向全球，利润通过人民币结算回流海南</p>
+                        </div>
+                        <div class="dashboard-card">
+                            <div class="dashboard-title">标准流</div>
+                            <div class="dashboard-value">海南 → 全球</div>
+                            <p>品质标准、碳足迹标准、ESG认证从海南制定并输出到全球产业</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 新闻动态 -->
+            <section id="news" class="content-section">
+                <header class="page-header">
+                    <h1 class="page-title">新闻动态</h1>
+                    <p class="page-subtitle">CoffeeOS最新进展与全球咖啡产业资讯</p>
+                </header>
+                
+                <div class="card fade-in" style="animation-delay: 0.1s">
+                    <div class="search-box mb-20">
+                        <i class="fas fa-search"></i>
+                        <input type="text" class="search-input" placeholder="搜索新闻..." id="newsSearchInput">
+                    </div>
+                    
+                    <div class="news-list" id="newsList">
+                        <!-- 新闻内容通过JavaScript动态生成 -->
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+    
+    <!-- 联系方式模态框 -->
+    <div class="modal" id="contactModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>商务合作联系信息</h2>
+                <button class="modal-close" id="contactModalClose">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            
+            <div class="contact-info">
+                <div class="contact-item">
+                    <div class="contact-icon">
+                        <i class="fab fa-weixin"></i>
+                    </div>
+                    <div class="contact-details">
+                        <h4>微信</h4>
+                        <p>+15800222338</p>
+                        <button class="contact-copy-btn" data-text="+15800222338">复制</button>
+                    </div>
+                </div>
+                
+                <div class="contact-item">
+                    <div class="contact-icon">
+                        <i class="fab fa-whatsapp"></i>
+                    </div>
+                    <div class="contact-details">
+                        <h4>WhatsApp</h4>
+                        <p>+85293188252</p>
+                        <button class="contact-copy-btn" data-text="+85293188252">复制</button>
+                    </div>
+                </div>
+                
+                <div class="contact-item">
+                    <div class="contact-icon">
+                        <i class="fas fa-envelope"></i>
+                    </div>
+                    <div class="contact-details">
+                        <h4>电子邮件</h4>
+                        <p>erik.wong@jebi.space</p>
+                        <button class="contact-copy-btn" data-text="erik.wong@jebi.space">复制</button>
+                    </div>
+                </div>
+                
+                <div class="contact-note">
+                    <p><strong>请注意：</strong></p>
+                    <p>• 商务合作请注明"CoffeeOS合作咨询"</p>
+                    <p>• 微信添加好友时请简要说明合作意向</p>
+                    <p>• 我们将在24小时内回复您的咨询</p>
+                    <p>• 如急需联系，请优先使用WhatsApp或电话</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 新闻详情模态框 -->
+    <div class="modal" id="newsModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="newsModalTitle"></h2>
+                <button class="modal-close" id="newsModalClose">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div id="newsModalDate" class="news-date mb-20"></div>
+            <div id="newsModalContent"></div>
+        </div>
+    </div>
+    
+    <script>
+        // 应用状态管理
+        const AppState = {
+            currentSection: 'home',
+            charts: {},
+            nodeData: [],
+            newsData: [],
+            searchQuery: ''
+        };
+        
+        // DOM 元素引用
+        const DOM = {
+            sidebarLeft: document.getElementById('sidebarLeft'),
+            mobileMenuToggle: document.getElementById('mobileMenuToggle'),
+            navList: document.getElementById('navList'),
+            homeLink: document.getElementById('homeLink'),
+            contactBtn: document.getElementById('contactBtn'),
+            contentSections: document.querySelectorAll('.content-section'),
+            newsSearchInput: document.getElementById('newsSearchInput'),
+            newsList: document.getElementById('newsList'),
+            contactModal: document.getElementById('contactModal'),
+            contactModalClose: document.getElementById('contactModalClose'),
+            newsModal: document.getElementById('newsModal'),
+            newsModalClose: document.getElementById('newsModalClose'),
+            newsModalTitle: document.getElementById('newsModalTitle'),
+            newsModalDate: document.getElementById('newsModalDate'),
+            newsModalContent: document.getElementById('newsModalContent'),
+            nodeMap: document.getElementById('nodeMap'),
+            nodeTooltip: document.getElementById('nodeTooltip')
+        };
+        
+        // 导航系统
+        class NavigationSystem {
+            constructor() {
+                this.initEventListeners();
+                this.initIntersectionObserver();
+            }
+            
+            initEventListeners() {
+                // 导航链接点击事件
+                DOM.navList.addEventListener('click', (e) => {
+                    const navLink = e.target.closest('.nav-link');
+                    if (!navLink) return;
+                    
+                    e.preventDefault();
+                    const sectionId = navLink.dataset.section;
+                    this.switchSection(sectionId);
+                    
+                    // 移动端关闭菜单
+                    if (window.innerWidth <= 992) {
+                        DOM.sidebarLeft.classList.remove('active');
+                    }
+                });
+                
+                // 首页Logo点击事件
+                DOM.homeLink.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    this.switchSection('home');
+                });
+                
+                // 移动端菜单切换
+                DOM.mobileMenuToggle.addEventListener('click', () => {
+                    DOM.sidebarLeft.classList.toggle('active');
+                });
+                
+                // 点击页面其他地方关闭移动端菜单
+                document.addEventListener('click', (e) => {
+                    if (window.innerWidth <= 992 && 
+                        !DOM.sidebarLeft.contains(e.target) && 
+                        !DOM.mobileMenuToggle.contains(e.target)) {
+                        DOM.sidebarLeft.classList.remove('active');
+                    }
+                });
+                
+                // 商务合作按钮
+                DOM.contactBtn.addEventListener('click', () => {
+                    this.showContactModal();
+                });
+                
+                // 关闭联系方式模态框
+                DOM.contactModalClose.addEventListener('click', () => {
+                    this.hideContactModal();
+                });
+                
+                // 点击模态框外部关闭
+                DOM.contactModal.addEventListener('click', (e) => {
+                    if (e.target === DOM.contactModal) {
+                        this.hideContactModal();
+                    }
+                });
+                
+                // 复制按钮功能
+                document.addEventListener('click', (e) => {
+                    if (e.target.classList.contains('contact-copy-btn')) {
+                        const textToCopy = e.target.getAttribute('data-text');
+                        this.copyToClipboard(textToCopy);
+                        
+                        // 显示复制成功提示
+                        const originalText = e.target.textContent;
+                        e.target.textContent = '已复制!';
+                        e.target.style.backgroundColor = 'var(--x-green)';
+                        e.target.style.borderColor = 'var(--x-green)';
+                        
+                        setTimeout(() => {
+                            e.target.textContent = originalText;
+                            e.target.style.backgroundColor = '';
+                            e.target.style.borderColor = '';
+                        }, 2000);
+                    }
+                });
+            }
+            
+            switchSection(sectionId) {
+                // 更新活动导航项
+                document.querySelectorAll('.nav-link').forEach(link => {
+                    link.classList.remove('active');
+                });
+                
+                document.querySelector(`.nav-link[data-section="${sectionId}"]`).classList.add('active');
+                
+                // 隐藏所有内容区
+                DOM.contentSections.forEach(section => {
+                    section.classList.remove('active');
+                });
+                
+                // 显示目标内容区
+                const targetSection = document.getElementById(sectionId);
+                targetSection.classList.add('active');
+                
+                // 更新应用状态
+                AppState.currentSection = sectionId;
+                
+                // 触发特定部分的初始化
+                this.initSectionContent(sectionId);
+                
+                // 更新页面标题
+                this.updatePageTitle(sectionId);
+                
+                // 滚动到顶部
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            }
+            
+            initSectionContent(sectionId) {
+                switch(sectionId) {
+                    case 'dashboard':
+                        setTimeout(() => ChartManager.initCharts(), 100);
+                        break;
+                    case 'nodes':
+                        setTimeout(() => NodeMap.init(), 100);
+                        break;
+                    case 'news':
+                        setTimeout(() => NewsManager.loadNews(), 100);
+                        break;
+                }
+            }
+            
+            updatePageTitle(sectionId) {
+                const titles = {
+                    'home': 'CoffeeOS | 全球咖啡产业控制中心',
+                    'dashboard': '战略驾驶舱 | CoffeeOS',
+                    'whitepaper': '技术白皮书 | CoffeeOS',
+                    'nodes': '全球节点网络 | CoffeeOS',
+                    'news': '新闻动态 | CoffeeOS'
+                };
+                
+                if (titles[sectionId]) {
+                    document.title = titles[sectionId];
+                }
+            }
+            
+            initIntersectionObserver() {
+                // 为卡片添加滚动动画
+                const observerOptions = {
+                    threshold: 0.1,
+                    rootMargin: '0px 0px -50px 0px'
+                };
+                
+                const observer = new IntersectionObserver((entries) => {
+                    entries.forEach(entry => {
+                        if (entry.isIntersecting) {
+                            entry.target.classList.add('fade-in');
+                        }
+                    });
+                }, observerOptions);
+                
+                // 观察所有卡片
+                document.querySelectorAll('.card').forEach(card => {
+                    observer.observe(card);
+                });
+            }
+            
+            showContactModal() {
+                DOM.contactModal.classList.add('active');
+                document.body.style.overflow = 'hidden';
+            }
+            
+            hideContactModal() {
+                DOM.contactModal.classList.remove('active');
+                document.body.style.overflow = '';
+            }
+            
+            copyToClipboard(text) {
+                // 使用现代剪贴板API
+                navigator.clipboard.writeText(text).then(() => {
+                    console.log('已复制到剪贴板: ' + text);
+                }).catch(err => {
+                    console.error('复制失败: ', err);
+                    // 备用方法
+                    const textArea = document.createElement('textarea');
+                    textArea.value = text;
+                    document.body.appendChild(textArea);
+                    textArea.select();
+                    document.execCommand('copy');
+                    document.body.removeChild(textArea);
+                });
+            }
+        }
+        
+        // 图表管理器
+        class ChartManager {
+            static initCharts() {
+                // 销毁现有图表
+                Object.values(AppState.charts).forEach(chart => {
+                    if (chart) chart.destroy();
+                });
+                
+                AppState.charts = {};
+                
+                // 初始化所有图表
+                this.initMarketShareChart();
+                this.initPriceChart();
+                this.initCurrencyChart();
+                this.initTaxChart();
+            }
+            
+            static initMarketShareChart() {
+                const ctx = document.getElementById('marketShareChart').getContext('2d');
+                AppState.charts.marketShare = new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        labels: ['2022', '2023', '2024', '2025'],
+                        datasets: [{
+                            label: '市场占有率 (%)',
+                            data: [0.8, 1.2, 1.7, 2.4],
+                            borderColor: '#00ba7c',
+                            backgroundColor: 'rgba(0, 186, 124, 0.1)',
+                            borderWidth: 3,
+                            fill: true,
+                            tension: 0.4
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: { 
+                            legend: { 
+                                display: false 
+                            },
+                            tooltip: {
+                                backgroundColor: 'rgba(21, 32, 43, 0.9)',
+                                titleColor: '#e7e9ea',
+                                bodyColor: '#e7e9ea',
+                                borderColor: '#2f3336',
+                                borderWidth: 1
+                            }
+                        },
+                        scales: {
+                            y: { 
+                                beginAtZero: true,
+                                grid: { 
+                                    color: 'rgba(255, 255, 255, 0.1)',
+                                    drawBorder: false
+                                },
+                                ticks: { 
+                                    color: '#8b98a5',
+                                    callback: function(value) {
+                                        return value + '%';
+                                    }
+                                }
+                            },
+                            x: {
+                                grid: { 
+                                    color: 'rgba(255, 255, 255, 0.1)',
+                                    drawBorder: false
+                                },
+                                ticks: { color: '#8b98a5' }
+                            }
+                        }
+                    }
+                });
+            }
+            
+            static initPriceChart() {
+                const ctx = document.getElementById('priceChart').getContext('2d');
+                AppState.charts.price = new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        labels: ['传统咖啡', '精品咖啡', '有机咖啡', 'CoffeeOS'],
+                        datasets: [{
+                            label: '批发价 ($/kg)',
+                            data: [8, 25, 42, 85],
+                            backgroundColor: [
+                                'rgba(110, 118, 125, 0.7)',
+                                'rgba(110, 118, 125, 0.7)',
+                                'rgba(110, 118, 125, 0.7)',
+                                '#00ba7c'
+                            ],
+                            borderColor: [
+                                '#6e767d',
+                                '#6e767d',
+                                '#6e767d',
+                                '#00ba7c'
+                            ],
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: { 
+                            legend: { display: false },
+                            tooltip: {
+                                backgroundColor: 'rgba(21, 32, 43, 0.9)',
+                                titleColor: '#e7e9ea',
+                                bodyColor: '#e7e9ea',
+                                borderColor: '#2f3336',
+                                borderWidth: 1,
+                                callbacks: {
+                                    label: function(context) {
+                                        return `$${context.parsed.y}/kg`;
+                                    }
+                                }
+                            }
+                        },
+                        scales: {
+                            y: { 
+                                beginAtZero: true,
+                                grid: { 
+                                    color: 'rgba(255, 255, 255, 0.1)',
+                                    drawBorder: false
+                                },
+                                ticks: { 
+                                    color: '#8b98a5',
+                                    callback: function(value) {
+                                        return '$' + value;
+                                    }
+                                }
+                            },
+                            x: {
+                                grid: { 
+                                    color: 'rgba(255, 255, 255, 0.1)',
+                                    drawBorder: false
+                                },
+                                ticks: { 
+                                    color: '#8b98a5',
+                                    font: {
+                                        size: 12
+                                    }
+                                }
+                            }
+                        }
+                    }
+                });
+            }
+            
+            static initCurrencyChart() {
+                const ctx = document.getElementById('currencyChart').getContext('2d');
+                AppState.charts.currency = new Chart(ctx, {
+                    type: 'doughnut',
+                    data: {
+                        labels: ['人民币', '美元', '欧元', '其他'],
+                        datasets: [{
+                            data: [42, 38, 15, 5],
+                            backgroundColor: [
+                                '#00ba7c',
+                                '#1d9bf0',
+                                '#ffd400',
+                                '#6e767d'
+                            ],
+                            borderColor: '#15202b',
+                            borderWidth: 2
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                position: 'bottom',
+                                labels: { 
+                                    color: '#8b98a5', 
+                                    padding: 20,
+                                    font: {
+                                        size: 12
+                                    }
+                                }
+                            },
+                            tooltip: {
+                                backgroundColor: 'rgba(21, 32, 43, 0.9)',
+                                titleColor: '#e7e9ea',
+                                bodyColor: '#e7e9ea',
+                                borderColor: '#2f3336',
+                                borderWidth: 1,
+                                callbacks: {
+                                    label: function(context) {
+                                        return `${context.label}: ${context.parsed}%`;
+                                    }
+                                }
+                            }
+                        },
+                        cutout: '65%'
+                    }
+                });
+            }
+            
+            static initTaxChart() {
+                const ctx = document.getElementById('taxChart').getContext('2d');
+                AppState.charts.tax = new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        labels: ['海南', '新加坡', '香港', '越南', '印尼'],
+                        datasets: [{
+                            label: '企业所得税率 (%)',
+                            data: [15, 17, 16.5, 20, 25],
+                            backgroundColor: [
+                                '#00ba7c',
+                                '#6e767d',
+                                '#6e767d',
+                                '#6e767d',
+                                '#6e767d'
+                            ],
+                            borderColor: [
+                                '#00ba7c',
+                                '#6e767d',
+                                '#6e767d',
+                                '#6e767d',
+                                '#6e767d'
+                            ],
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: { 
+                            legend: { display: false },
+                            tooltip: {
+                                backgroundColor: 'rgba(21, 32, 43, 0.9)',
+                                titleColor: '#e7e9ea',
+                                bodyColor: '#e7e9ea',
+                                borderColor: '#2f3336',
+                                borderWidth: 1,
+                                callbacks: {
+                                    label: function(context) {
+                                        return `${context.parsed.y}%`;
+                                    }
+                                }
+                            }
+                        },
+                        scales: {
+                            y: { 
+                                beginAtZero: true,
+                                grid: { 
+                                    color: 'rgba(255, 255, 255, 0.1)',
+                                    drawBorder: false
+                                },
+                                ticks: { 
+                                    color: '#8b98a5',
+                                    callback: function(value) {
+                                        return value + '%';
+                                    }
+                                },
+                                max: 30
+                            },
+                            x: {
+                                grid: { 
+                                    color: 'rgba(255, 255, 255, 0.1)',
+                                    drawBorder: false
+                                },
+                                ticks: { color: '#8b98a5' }
+                            }
+                        }
+                    }
+                });
+            }
+        }
+        
+        // 节点地图管理器
+        class NodeMap {
+            static init() {
+                this.clearMap();
+                this.initNodeData();
+                this.drawConnections();
+                this.drawNodes();
+                this.initEventListeners();
+            }
+            
+            static clearMap() {
+                DOM.nodeMap.innerHTML = '';
+                DOM.nodeTooltip.classList.remove('active');
+            }
+            
+            static initNodeData() {
+                AppState.nodeData = [
+                    { id: 'hainan', name: '海南总部', type: 'hub', x: 50, y: 30, size: 36, 
+                      info: '全球控制中心 - 研发、结算、标准制定\n\n功能: AI算法研发、全球供应链调度、人民币结算、碳足迹认证\n\n员工: 150人\n\n投资: ¥2.5亿' },
+                    { id: 'vietnam', name: '越南中心', type: 'regional', x: 65, y: 40, size: 30,
+                      info: '东南亚区域中心\n\n功能: 区域运营、技术支持、本地化适配\n\n种植节点: 3个\n\n产能: 500吨/年' },
+                    { id: 'indonesia', name: '印尼节点', type: 'node', x: 60, y: 50, size: 24,
+                      info: '印尼种植基地 #1\n\n位置: 苏门答腊\n\n面积: 50亩\n\n产能: 150吨/年\n\n品种: 阿拉比卡' },
+                    { id: 'colombia', name: '哥伦比亚中心', type: 'regional', x: 20, y: 45, size: 30,
+                      info: '南美区域中心\n\n功能: 品种研发、本地供应链管理\n\n种植节点: 2个\n\n产能: 400吨/年' },
+                    { id: 'brazil', name: '巴西节点', type: 'node', x: 25, y: 55, size: 24,
+                      info: '巴西种植基地 #1\n\n位置: 米纳斯吉拉斯\n\n面积: 60亩\n\n产能: 180吨/年\n\n品种: 罗布斯塔' },
+                    { id: 'ethiopia', name: '埃塞俄比亚中心', type: 'regional', x: 55, y: 60, size: 30,
+                      info: '非洲区域中心\n\n功能: 基因库建设、传统品种保护\n\n种植节点: 2个\n\n产能: 300吨/年' },
+                    { id: 'indonesia2', name: '印尼节点2', type: 'node', x: 70, y: 45, size: 24,
+                      info: '印尼种植基地 #2\n\n位置: 爪哇\n\n面积: 40亩\n\n产能: 120吨/年\n\n品种: 阿拉比卡' }
+                ];
+            }
+            
+            static drawConnections() {
+                const connections = [
+                    { from: 'hainan', to: 'vietnam' },
+                    { from: 'hainan', to: 'colombia' },
+                    { from: 'hainan', to: 'ethiopia' },
+                    { from: 'vietnam', to: 'indonesia' },
+                    { from: 'vietnam', to: 'indonesia2' },
+                    { from: 'colombia', to: 'brazil' }
+                ];
+                
+                connections.forEach(conn => {
+                    const fromNode = AppState.nodeData.find(n => n.id === conn.from);
+                    const toNode = AppState.nodeData.find(n => n.id === conn.to);
+                    
+                    if (fromNode && toNode) {
+                        const line = document.createElement('div');
+                        line.className = 'node-line';
+                        
+                        const dx = toNode.x - fromNode.x;
+                        const dy = toNode.y - fromNode.y;
+                        const length = Math.sqrt(dx * dx + dy * dy);
+                        const angle = Math.atan2(dy, dx) * 180 / Math.PI;
+                        
+                        line.style.width = `${length}%`;
+                        line.style.left = `${fromNode.x}%`;
+                        line.style.top = `${fromNode.y}%`;
+                        line.style.transform = `rotate(${angle}deg)`;
+                        
+                        DOM.nodeMap.appendChild(line);
+                    }
+                });
+            }
+            
+            static drawNodes() {
+                AppState.nodeData.forEach(node => {
+                    const nodeElement = document.createElement('div');
+                    nodeElement.className = `node ${node.type}`;
+                    nodeElement.dataset.nodeId = node.id;
+                    nodeElement.style.left = `${node.x}%`;
+                    nodeElement.style.top = `${node.y}%`;
+                    nodeElement.style.width = `${node.size}px`;
+                    nodeElement.style.height = `${node.size}px`;
+                    
+                    const nodeId = this.getNodeAbbreviation(node.id);
+                    nodeElement.textContent = nodeId;
+                    
+                    DOM.nodeMap.appendChild(nodeElement);
+                });
+            }
+            
+            static getNodeAbbreviation(nodeId) {
+                const abbreviations = {
+                    'hainan': 'HN',
+                    'vietnam': 'VN',
+                    'indonesia': 'ID1',
+                    'indonesia2': 'ID2',
+                    'colombia': 'CO',
+                    'brazil': 'BR',
+                    'ethiopia': 'ET'
+                };
+                return abbreviations[nodeId] || nodeId.substring(0, 2).toUpperCase();
+            }
+            
+            static initEventListeners() {
+                DOM.nodeMap.addEventListener('click', (e) => {
+                    const nodeElement = e.target.closest('.node');
+                    if (!nodeElement) return;
+                    
+                    const nodeId = nodeElement.dataset.nodeId;
+                    const node = AppState.nodeData.find(n => n.id === nodeId);
+                    
+                    if (node) {
+                        this.showNodeTooltip(node, e.clientX, e.clientY);
+                    }
+                });
+                
+                // 点击其他地方隐藏工具提示
+                document.addEventListener('click', (e) => {
+                    if (!e.target.closest('.node') && !e.target.closest('.node-tooltip')) {
+                        DOM.nodeTooltip.classList.remove('active');
+                    }
+                });
+                
+                // 窗口调整大小时重新绘制
+                window.addEventListener('resize', () => {
+                    if (AppState.currentSection === 'nodes') {
+                        setTimeout(() => this.init(), 100);
+                    }
+                });
+            }
+            
+            static showNodeTooltip(node, x, y) {
+                DOM.nodeTooltip.innerHTML = `
+                    <h4>${node.name}</h4>
+                    <p style="white-space: pre-line; margin-top: 8px;">${node.info}</p>
+                    <div style="margin-top: 12px; font-size: 12px; color: #6e767d;">
+                        点击其他地方关闭
+                    </div>
+                `;
+                
+                DOM.nodeTooltip.classList.add('active');
+                
+                // 定位工具提示
+                const tooltipWidth = DOM.nodeTooltip.offsetWidth;
+                const tooltipHeight = DOM.nodeTooltip.offsetHeight;
+                const windowWidth = window.innerWidth;
+                const windowHeight = window.innerHeight;
+                
+                let left = x + 15;
+                let top = y + 15;
+                
+                // 确保工具提示不超出视口
+                if (left + tooltipWidth > windowWidth) {
+                    left = x - tooltipWidth - 15;
+                }
+                
+                if (top + tooltipHeight > windowHeight) {
+                    top = y - tooltipHeight - 15;
+                }
+                
+                DOM.nodeTooltip.style.left = `${left}px`;
+                DOM.nodeTooltip.style.top = `${top}px`;
+            }
+        }
+        
+        // 新闻管理器
+        class NewsManager {
+            static loadNews() {
+                this.initNewsData();
+                this.renderNews();
+                this.initEventListeners();
+            }
+            
+            static initNewsData() {
+                AppState.newsData = [
+                    {
+                        id: 1,
+                        date: '2025年7月15日 · 政策动态',
+                        title: '海南封关首批跨境数据负面清单实施，为咖啡科研数据跨境流动打开通道',
+                        excerpt: '海南自贸港公布首批跨境数据负面清单，农业科研数据被列入"绿灯"区域。CoffeeOS的全球咖啡基因数据库跨境联合研发将直接受益，加速育种创新。',
+                        content: `海南自由贸易港近日正式实施首批跨境数据流动负面清单，这是中国在数据跨境流动管理制度上的重大创新。根据清单，农业科研数据、气象数据等被列入"绿灯"区域，允许在安全评估基础上自由流动。
+
+                        <p>CoffeeOS作为全球领先的雾化水培咖啡技术提供商，其全球咖啡基因数据库包含127个咖啡品种的完整基因组数据。新政策实施后，这些数据可以更高效地与全球合作伙伴共享，加速新品种的研发进程。</p>
+                        
+                        <p>"这对我们来说是一个重大利好，"CoffeeOS首席科学家李明博士表示，"以前我们需要为每一次数据跨境传输进行单独审批，现在有了负面清单制度，合规流程将大大简化，研发效率预计可提升40%以上。"</p>
+                        
+                        <p>此外，CoffeeOS在海南建立的全球研发中心还将受益于数据跨境便利化带来的国际人才吸引力。公司计划在未来三年内，将海南研发团队的规模扩大至300人。</p>`
+                    },
+                    {
+                        id: 2,
+                        date: '2025年6月28日 · 技术突破',
+                        title: 'CoffeeOS雾化水培咖啡通过欧盟最严格有机认证，溢价达传统咖啡3.8倍',
+                        excerpt: '经过18个月的审核，CoffeeOS雾化水培咖啡获得欧盟ECOCERT有机认证。这是全球首个通过该认证的水培咖啡，欧洲市场批发价达到每公斤$85，创行业纪录。',
+                        content: `经过长达18个月的严格审核，CoffeeOS的雾化水培咖啡成功获得欧盟ECOCERT有机认证，成为全球首个获得该认证的水培咖啡产品。ECOCERT是欧盟最严格、最具权威性的有机认证机构之一。
+                        
+                        <p>认证通过后，CoffeeOS水培咖啡在欧洲市场的批发价达到每公斤85美元，是传统有机咖啡价格的2.5倍，传统商业咖啡价格的3.8倍。这一价格创下了咖啡批发价的新纪录。</p>
+                        
+                        <p>CoffeeOS首席执行官张伟表示："这不仅是对我们技术的认可，更是对整个雾化水培农业模式的认可。我们的咖啡完全不含农药残留，碳排放比传统种植减少78%，水质消耗减少95%，这些数据在认证过程中给审核团队留下了深刻印象。"</p>
+                        
+                        <p>目前，CoffeeOS已与欧洲高端连锁超市Waitrose、Edeka达成供应协议，首批认证咖啡将于下个月登陆欧洲市场。</p>`
+                    },
+                    {
+                        id: 3,
+                        date: '2025年5月12日 · 战略合作',
+                        title: 'CoffeeOS与中国热带农业科学院共建"智慧咖啡联合实验室"落户海南',
+                        excerpt: '双方将在咖啡基因组学、AI种植算法、碳足迹计量等领域展开深度合作，实验室将享受海南15%企业所得税及研发费用加计扣除政策。',
+                        content: `CoffeeOS与中国热带农业科学院日前在海南海口签署战略合作协议，共同成立"智慧咖啡联合实验室"。该实验室将落户海南自贸港科技创新园区，享受海南15%的企业所得税优惠及研发费用加计扣除政策。
+                        
+                        <p>根据协议，双方将在以下四个领域展开深度合作：</p>
+                        
+                        <ol>
+                            <li><strong>咖啡基因组学研究</strong>：建立全球最完整的咖啡基因数据库，开发分子标记辅助育种技术。</li>
+                            <li><strong>AI种植算法优化</strong>：利用机器学习优化雾化水培的环境控制参数，提升产量和品质稳定性。</li>
+                            <li><strong>碳足迹精准计量</strong>：开发咖啡全生命周期碳足迹计量模型，为碳交易提供数据支持。</li>
+                            <li><strong>病虫害智能诊断</strong>：基于计算机视觉技术开发咖啡病虫害早期诊断系统。</li>
+                        </ol>
+                        
+                        <p>实验室首期投资5000万元，计划在三年内申请专利20项以上，培养博士、硕士研究生30名。中国热带农业科学院将派出15名研究员常驻实验室。</p>`
+                    },
+                    {
+                        id: 4,
+                        date: '2025年4月5日 · 金融创新',
+                        title: '全球首单"咖啡碳汇"绿色债券在海南国际能源交易中心发行',
+                        excerpt: '基于CoffeeOS可验证的碳减排数据，首单规模2亿元的咖啡碳汇绿色债券成功发行，票面利率3.2%，超额认购5.8倍，开辟农业碳金融新路径。',
+                        content: `基于CoffeeOS雾化水培咖啡可验证的碳减排数据，全球首单"咖啡碳汇"绿色债券在海南国际能源交易中心成功发行。该债券发行规模2亿元，期限3年，票面利率3.2%，获得了市场热烈响应，超额认购倍数达5.8倍。
+                        
+                        <p>这笔债券的创新之处在于，它将咖啡种植过程中产生的碳汇收益证券化。CoffeeOS的雾化水培技术使每公斤咖啡豆的碳排放比传统种植减少78%。经第三方机构核算，CoffeeOS海南基地年碳减排量相当于1.2万吨二氧化碳。</p>
+                        
+                        <p>"这是农业碳金融的一次重要创新，"债券主承销商中信证券负责人表示，"CoffeeOS提供的可验证、可追溯的碳减排数据，为债券定价提供了坚实依据。这种模式未来可以在其他农业领域复制。"</p>
+                        
+                        <p>债券募集资金将用于CoffeeOS在越南和印尼的新种植基地建设。预计新基地投产后，年碳减排量将增加至3.5万吨二氧化碳当量。</p>`
+                    },
+                    {
+                        id: 5,
+                        date: '2025年3月18日 · 市场拓展',
+                        title: 'CoffeeOS与瑞士咖啡拍卖所达成战略合作，设立水培咖啡专属拍卖品类',
+                        excerpt: '全球最具影响力的咖啡拍卖平台将为CoffeeOS设立独立拍卖品类，首次拍卖会将于2025年9月在海南举行，采用人民币计价结算。',
+                        content: `CoffeeOS与全球最具影响力的咖啡拍卖平台——瑞士咖啡拍卖所(Swiss Coffee Auction)达成战略合作，后者将为CoffeeOS设立独立的水培咖啡拍卖品类。这是该拍卖所首次为单一技术类别的咖啡设立专属拍卖品类。
+                        
+                        <p>首次CoffeeOS水培咖啡专场拍卖会定于2025年9月在海南三亚举行，届时将有来自全球的50家顶级烘焙商和贸易商参与竞拍。拍卖会将采用人民币计价和结算，这在国际高端咖啡拍卖中尚属首次。</p>
+                        
+                        <p>瑞士咖啡拍卖所首席执行官Hans Müller表示："CoffeeOS的水培咖啡代表了咖啡产业的未来方向。其卓越的品质一致性和可追溯性，使其成为拍卖市场的理想标的。我们预计首批拍卖的咖啡豆成交价将创下新纪录。"</p>
+                        
+                        <p>本次拍卖将涵盖CoffeeOS的三个顶级产品系列：</p>
+                        
+                        <ul>
+                            <li><strong>基因珍藏系列</strong>：来自127个咖啡品种基因库的稀有品种</li>
+                            <li><strong>零碳认证系列</strong>：全生命周期碳中和的咖啡产品</li>
+                            <li><strong>风味定制系列</strong>：根据客户需求定制的特殊风味咖啡</li>
+                        </ul>
+                        
+                        <p>拍卖所得的部分资金将用于支持咖啡原产地的社区发展项目。</p>`
+                    }
+                ];
+            }
+            
+            static renderNews() {
+                DOM.newsList.innerHTML = '';
+                
+                let filteredNews = AppState.newsData;
+                
+                // 应用搜索过滤
+                if (AppState.searchQuery) {
+                    const query = AppState.searchQuery.toLowerCase();
+                    filteredNews = AppState.newsData.filter(news => 
+                        news.title.toLowerCase().includes(query) || 
+                        news.excerpt.toLowerCase().includes(query) ||
+                        news.content.toLowerCase().includes(query)
+                    );
+                }
+                
+                // 渲染新闻列表
+                filteredNews.forEach(news => {
+                    const newsItem = document.createElement('div');
+                    newsItem.className = 'news-item';
+                    newsItem.dataset.newsId = news.id;
+                    
+                    newsItem.innerHTML = `
+                        <div class="news-date">${news.date}</div>
+                        <h3 class="news-title">${news.title}</h3>
+                        <p class="news-excerpt">${news.excerpt}</p>
+                    `;
+                    
+                    DOM.newsList.appendChild(newsItem);
+                });
+                
+                // 如果没有搜索结果
+                if (filteredNews.length === 0) {
+                    DOM.newsList.innerHTML = `
+                        <div class="text-center" style="padding: 40px 20px; color: #6e767d;">
+                            <i class="fas fa-search" style="font-size: 48px; margin-bottom: 20px;"></i>
+                            <h3>未找到相关新闻</h3>
+                            <p>请尝试其他搜索关键词</p>
+                        </div>
+                    `;
+                }
+            }
+            
+            static initEventListeners() {
+                // 新闻搜索
+                DOM.newsSearchInput.addEventListener('keypress', (e) => {
+                    if (e.key === 'Enter') {
+                        AppState.searchQuery = DOM.newsSearchInput.value.trim();
+                        this.renderNews();
+                    }
+                });
+                
+                // 新闻点击事件
+                DOM.newsList.addEventListener('click', (e) => {
+                    const newsItem = e.target.closest('.news-item');
+                    if (!newsItem) return;
+                    
+                    const newsId = parseInt(newsItem.dataset.newsId);
+                    const news = AppState.newsData.find(n => n.id === newsId);
+                    
+                    if (news) {
+                        this.showNewsDetail(news);
+                    }
+                });
+                
+                // 关闭新闻模态框
+                DOM.newsModalClose.addEventListener('click', () => {
+                    this.hideNewsModal();
+                });
+                
+                // 点击模态框外部关闭
+                DOM.newsModal.addEventListener('click', (e) => {
+                    if (e.target === DOM.newsModal) {
+                        this.hideNewsModal();
+                    }
+                });
+            }
+            
+            static showNewsDetail(news) {
+                DOM.newsModalTitle.textContent = news.title;
+                DOM.newsModalDate.textContent = news.date;
+                DOM.newsModalContent.innerHTML = news.content;
+                
+                DOM.newsModal.classList.add('active');
+                document.body.style.overflow = 'hidden';
+            }
+            
+            static hideNewsModal() {
+                DOM.newsModal.classList.remove('active');
+                document.body.style.overflow = '';
+            }
+        }
+        
+        // 趋势标签交互
+        class TrendInteractions {
+            static init() {
+                this.initTrendClicks();
+                this.initSearch();
+            }
+            
+            static initTrendClicks() {
+                // 模拟趋势数据
+                const trends = [
+                    { tag: '#碳权交易与精品咖啡', category: '产业 · 活跃', stats: '15.2万 讨论' },
+                    { tag: '#可控环境农业(CEA)', category: '科技 · 飙升', stats: '年增长 34%' },
+                    { tag: '#跨境育种材料便利化', category: '海南 · 新政', stats: '阅读 88.5万' },
+                    { tag: '#大宗商品人民币结算', category: '金融 · 趋势', stats: '22.1万 关注' }
+                ];
+                
+                // 在实际应用中，这里可以添加趋势点击事件
+                // 例如：document.querySelectorAll('.trend-item').forEach(item => {...})
+            }
+            
+            static initSearch() {
+                const searchBoxes = document.querySelectorAll('.search-box input');
+                
+                searchBoxes.forEach(input => {
+                    input.addEventListener('keypress', (e) => {
+                        if (e.key === 'Enter') {
+                            const query = e.target.value.trim();
+                            if (query) {
+                                // 在实际应用中，这里可以执行搜索并显示结果
+                                console.log(`搜索: ${query}`);
+                                e.target.value = '';
+                            }
+                        }
+                    });
+                });
+            }
+        }
+        
+        // 初始化应用
+        document.addEventListener('DOMContentLoaded', () => {
+            // 初始化各系统
+            const navigation = new NavigationSystem();
+            TrendInteractions.init();
+            
+            // 初始化首页内容
+            navigation.initSectionContent('home');
+            
+            // 处理窗口大小变化
+            window.addEventListener('resize', () => {
+                // 在移动端，如果窗口变大，确保菜单正确显示
+                if (window.innerWidth > 992) {
+                    DOM.sidebarLeft.classList.remove('active');
+                }
+            });
+            
+            // 初始化模拟数据更新
+            setInterval(() => {
+                // 在实际应用中，这里可以更新实时数据
+                // 例如：更新图表数据、新闻等
+            }, 30000);
+        });
+    </script>
+</body>
+</html>
